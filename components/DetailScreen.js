@@ -5,7 +5,10 @@ import {
   View,
   ActivityIndicator,
   FlatList,
+  Image
 } from 'react-native';
+
+import { listStyles } from '../utils/styles';
 
 const API_URL = 'http://www.thecocktaildb.com/api/json/v1/1/lookup.php';
 
@@ -113,14 +116,21 @@ export default class DetailScreen extends Component {
 
   _renderItem({ item: { measure, name } }) {
     return (
-      <Text>
+      <Text style={listStyles.item}>
         {measure} {name}
       </Text>
     );
   }
 
   render() {
-    const { isLoading, ingredients } = this.state;
+    const {
+      isLoading,
+      ingredients,
+      thumb,
+      name,
+      glass,
+      instructions
+    } = this.state;
 
     if (isLoading) {
       return (
@@ -131,11 +141,28 @@ export default class DetailScreen extends Component {
     }
 
     return (
-      <FlatList
-        data={ingredients}
-        keyExtractor={this.keyExtractor}
-        renderItem={this.renderItem}
-      />
+      <View>
+        <Text>{name}</Text>
+        {thumb &&
+          <Image
+            style={{width: 50, height: 50}}
+            source={{ uri: thumb }}
+          />
+        }
+
+        <Text>Glass</Text>
+        <Text>{glass}</Text>
+
+        <Text>Ingredients</Text>
+        <FlatList
+          data={ingredients}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
+
+        <Text>Instructions</Text>
+        <Text>{instructions}</Text>
+      </View>
     );
   }
 }

@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 
 import { createAlphaSections, sortArrayOfObjects } from '../utils/sort';
-import { Separator } from './helpers/styles';
+import { listStyles } from '../utils/styles';
+import { Separator } from './helpers/list';
 
 const API_URL = 'http://www.thecocktaildb.com/api/json/v1/1/search.php';
 
@@ -17,14 +18,14 @@ const RenderItem = ({ navigate, item: { strDrink, idDrink } }) => (
   <TouchableOpacity
     onPress={() => navigate('Detail', { id: idDrink })}
   >
-    <Text style={styles.item}>
+    <Text style={listStyles.item}>
       {strDrink}
     </Text>
   </TouchableOpacity>
 );
 
 const RenderSectionHeader = ({ section: { name } }) => (
-  <Text style={styles.header}>{name}</Text>
+  <Text style={listStyles.header}>{name}</Text>
 );
 
 function wrapWithNavigation(navigate, Component) {
@@ -93,19 +94,3 @@ export default class ResultScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#FFF',
-    color: '#000',
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 10,
-  },
-
-  item: {
-    color: '#000',
-    fontSize: 16,
-    padding: 12,
-  },
-});
