@@ -3,12 +3,11 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   ActivityIndicator,
-  FlatList,
-  Image
+  Image,
+  Dimensions
 } from 'react-native';
-
-import { listStyles } from '../utils/styles';
 
 const API_URL = 'http://www.thecocktaildb.com/api/json/v1/1/lookup.php';
 
@@ -38,8 +37,6 @@ export default class DetailScreen extends Component {
       ingredients: []
     }
 
-    this.keyExtractor = this._keyExtractor.bind(this);
-    this.renderItem = this._renderItem.bind(this);
     this.buildIngredientsList = this._buildIngredientsList.bind(this);
   }
 
@@ -55,17 +52,40 @@ export default class DetailScreen extends Component {
           strDrink: name,
           strGlass: glass,
           strInstructions: instructions,
-          strDrinkThumb: thumb = null
+          strDrinkThumb: thumbSrc
         } = cocktail;
-
-        this.setState({
+        const baseState = {
           isLoading: false,
-          ingredients,
           name,
           glass,
           instructions,
-          thumb
-        });
+          ingredients
+        };
+
+        if (thumbSrc) {
+          Image.getSize(thumbSrc, (srcWidth, srcHeight) => {
+            const maxHeight = Dimensions.get('window').height;
+            const maxWidth = Dimensions.get('window').width;
+            const ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+            const width = srcWidth * ratio;
+            const height = srcHeight * ratio;
+
+            this.setState({
+              ...baseState,
+              thumb: {
+                src: thumbSrc,
+                height,
+                width
+              }
+            });
+          }, (error) => {
+            console.error(error);
+          });
+        } else {
+          this.setState({
+            ...baseState
+          });
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -110,18 +130,6 @@ export default class DetailScreen extends Component {
     return combined;
   }
 
-  _keyExtractor(item, index) {
-    return item.id;
-  }
-
-  _renderItem({ item: { measure, name } }) {
-    return (
-      <Text style={listStyles.item}>
-        {measure} {name}
-      </Text>
-    );
-  }
-
   render() {
     const {
       isLoading,
@@ -141,28 +149,67 @@ export default class DetailScreen extends Component {
     }
 
     return (
-      <View>
-        <Text>{name}</Text>
+      <ScrollView style={styles.container}>
+        <Text style={styles.name}>{name}</Text>
+
         {thumb &&
           <Image
-            style={{width: 50, height: 50}}
-            source={{ uri: thumb }}
+            style={{ width: thumb.width, height: thumb.height, marginTop: 20 }}
+            source={{ uri: thumb.src }}
+            resizeMode="cover"
           />
         }
 
-        <Text>Glass</Text>
-        <Text>{glass}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Glass</Text>
+          <Text style={styles.prose}>{glass}</Text>
 
-        <Text>Ingredients</Text>
-        <FlatList
-          data={ingredients}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-        />
+          <Text style={styles.header}>Instructions</Text>
+          <Text style={styles.prose}>{instructions}</Text>
 
-        <Text>Instructions</Text>
-        <Text>{instructions}</Text>
-      </View>
+          <Text style={styles.header}>Ingredients</Text>
+          {ingredients.map(({ measure, name }) => (
+            <Text
+              key={name}
+              style={styles.ingredient}
+            >
+              {measure} {name}
+            </Text>
+          ))}
+        </View>
+      </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#FFF',
+  },
+
+  name: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+
+  textContainer: {
+    padding: 10
+  },
+
+  header: {
+    marginTop: 22,
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+
+  prose: {
+    marginTop: 10,
+    fontSize: 14
+  },
+
+  ingredient: {
+    marginTop: 10,
+    fontSize: 14
+  }
+});
