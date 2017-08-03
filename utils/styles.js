@@ -1,4 +1,4 @@
-import StyleSheet from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export const listStyles = StyleSheet.create({
   header: {
@@ -6,7 +6,7 @@ export const listStyles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     fontWeight: 'bold',
-    padding: 10,
+    padding: 10
   },
 
   item: {
