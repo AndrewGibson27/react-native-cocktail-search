@@ -2,7 +2,15 @@
   "name": "cocktail-search",
   "version": "0.1.0",
   "description": "A React Native app for searching cocktail recipes",
-  "author": null,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrewgibson27/react-native-cocktail-search"
+  },
+  "author": "AndrewGibson27",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewgibson27/react-native-cocktail-search/issues"
+  },
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
     "expo": "^19.0.0",
